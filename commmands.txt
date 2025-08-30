@@ -1,0 +1,114 @@
+
+#  Terminal Commands
+
+### 1. **Create project folder**
+
+```powershell
+mkdir Visual_project_Finder
+cd Visual_project_Finder
+```
+
+---
+
+### 2. **Backend Setup (FastAPI + Supabase + CLIP)**
+
+```powershell
+mkdir backend
+cd backend
+python -m venv venv
+venv\Scripts\activate   # activate virtualenv on Windows
+```
+
+#### Install dependencies
+
+```powershell
+pip install fastapi uvicorn supabase psycopg2-binary torch torchvision torchaudio transformers pillow python-dotenv
+```
+
+---
+
+### 3. **Run FastAPI server**
+
+Make sure you’re inside `backend` and venv is activated:
+
+```powershell
+uvicorn app.main:app --reload --port 8000
+```
+
+* This starts the API at: `http://127.0.0.1:8000`
+* Swagger UI docs: `http://127.0.0.1:8000/docs`
+
+---
+
+### 4. **Frontend Setup (React)**
+
+From project root:
+
+```powershell
+cd ..
+npx create-react-app frontend
+cd frontend
+```
+
+#### Install dependencies (for fetch + UI loader)
+
+```powershell
+npm install
+```
+
+(React already comes with required stuff for fetch and state management, no extra libs unless you want animation libraries)
+
+---
+
+### 5. **Run React app**
+
+```powershell
+npm start
+```
+
+* This runs frontend at: `http://localhost:3000`
+
+---
+
+### 6. **Testing the API (Optional)**
+
+#### With Python requests
+
+```powershell
+python test_api.py
+```
+
+(where `test_api.py` contains your testing script)
+
+#### With Postman
+
+No terminal command — just GUI.
+
+---
+
+### 7. **Deactivate virtual environment**
+
+When you’re done working on backend:
+
+```powershell
+deactivate
+```
+
+---
+
+
+When working on the project:
+
+```powershell
+# 1. Start backend
+cd Visual_project_Finder\backend
+venv\Scripts\activate
+uvicorn app.main:app --reload --port 8000
+
+# 2. Start frontend (in new terminal)
+cd Visual_project_Finder\frontend
+npm start
+```
+
+---
+
