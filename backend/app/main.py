@@ -1,31 +1,31 @@
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Optional
-import numpy as np
+import torch
+import clip
 
-from .database import supabase
-from .clip_model import load_clip, get_device
 from .utils import fetch_image_bytes, load_image_from_bytes, parse_embedding_field, top_k_similar, normalize_vector
+from .database import supabase
 
-# Load CLIP model once
-_model, _processor = load_clip()
-_device = get_device()
+# Load ViT-B/32 CLIP model locally
+device = "cpu"  # Force CPU to save memory
+_model, _preprocess = clip.load("ViT-B/32", device=device)
+_model.eval()
 
 app = FastAPI(title="Visual Product Matcher")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allow all for now, restrict in production
+    allow_origins=["*"],
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 async def embed_image_pil(img):
-    """Generate embedding for a PIL image using CLIP."""
-    inputs = _processor(images=img, return_tensors="pt").to(_device)
-    import torch
+    image_tensor = _preprocess(img).unsqueeze(0).to(device)
     with torch.no_grad():
-        features = _model.get_image_features(**inputs)
+        features = _model.encode_image(image_tensor)
+        features = features / features.norm(dim=-1, keepdim=True)  # Normalize
     vec = features[0].cpu().numpy().astype("float32")
     return normalize_vector(vec)
 
@@ -38,7 +38,6 @@ async def search_by_image(
     if file is None and not image_url:
         raise HTTPException(status_code=400, detail="Provide file or image_url")
 
-    # Get image bytes
     if file:
         image_bytes = await file.read()
     else:
@@ -51,10 +50,8 @@ async def search_by_image(
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Invalid image: {e}")
 
-    # Get query embedding
     query_vec = await embed_image_pil(img)
 
-    # Fetch stored embeddings from Supabase
     resp = supabase.table("products").select("id,name,category,image_url,embedding").execute()
     items = resp.data or []
 
@@ -68,7 +65,6 @@ async def search_by_image(
     if not candidate_vecs:
         raise HTTPException(status_code=500, detail="No embeddings available in database")
 
-    # Compute similarities
     top = top_k_similar(query_vec, candidate_vecs, k=top_k)
 
     results = []

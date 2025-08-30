@@ -15,6 +15,7 @@ def fetch_image_bytes(url: str, timeout: int = 10) -> Optional[bytes]:
         print("fetch_image_bytes error:", e)
         return None
 
+
 def load_image_from_bytes(b: bytes) -> Image.Image:
     """Convert bytes to PIL image."""
     return Image.open(io.BytesIO(b)).convert("RGB")
