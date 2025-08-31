@@ -36,7 +36,7 @@ function Home() {
     }
 
     try {
-      const res = await fetch("http://127.0.0.1:8000/search/image", {
+      const res = await fetch("https://visualproductfinder-production.up.railway.app/search/image", {
         method: "POST",
         body: formData,
       });
