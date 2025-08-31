@@ -1,4 +1,3 @@
-﻿# visual_product_finder
 
 # **Project Documentation** 
 
@@ -59,7 +58,6 @@ Visual Product Finder is a web application designed to allow users to search for
 ## **5. Deployment**
 - **Frontend:** Hosted on Vercel ([Link](https://visual-product-finder-w9i6-git-main-aman-psits-projects.vercel.app/))  
 - **Backend:** Hosted on Railway ([Link](https://visualproductfinder-production.up.railway.app/search/image))  
-
 ---
 
 ## **6. Technologies**
@@ -88,3 +86,4 @@ Visual Product Finder is a web application designed to allow users to search for
 ---
 
 I have also given a commands .txt to test model at local or is you are not able to recall commands
+
